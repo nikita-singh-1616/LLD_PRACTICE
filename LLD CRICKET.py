@@ -4,6 +4,9 @@
 # In[ ]:
 
 
+import random
+
+
 class Player:
     def __init__(self,name):
         self.name = name
@@ -128,6 +131,7 @@ class Over:
     def start(self):
         i = 0
         while i<6:
+            print(f'STRIKER-{self.striker.name}\nNON-STRIKER-{self.non_striker.name}')
             inp = input('enter the ball reading')
             runs = ['0','1','2','3','4','5','6']
             if inp in runs:
@@ -148,6 +152,10 @@ class Over:
                 self.striker = self.batting_team.send_player()
                 self.bowler.add_wicket()
                 i+=1
+                if not self.striker:
+                    break
+            else:
+                print('unknown input...enter a valid input.')
         self.batting_team.show_batting_team()
         print(self.balls)
         print('------------------------------------------------------')
@@ -163,6 +171,9 @@ class Match:
         self.over_rec = []
         self.striker = None
         self.non_striker = None
+        self.score = 0
+        self.batting_team = None
+        self.bowling_team = None
         self.welcome()
         
         
@@ -173,21 +184,63 @@ class Match:
         self.team1 = Team(team_size)
         self.team1.show_team()
         self.team2 = Team(team_size)
+        self.team2.show_team()
+        self.toss()
+
+    def toss(self):
+        print('ITS TIME FOR TOSS!!')
+        toss_obj =Toss(self.team1,self.team2)
+        self.batting_team,self.bowling_team=toss_obj.chose()
+        print(f'Batting Team-{self.batting_team.team_name}')
+        print(f'Bowling Team-{self.bowling_team.team_name}')
         self.striker = self.assign_batsmen()
         self.non_striker = self.assign_batsmen()
+        self.start_innings()
+
+    def start_innings(self):
         for i in range(self.overs):
             print(f'STARTING OVER {i+1}')
-            current_over = Over(self.team1,self.team2,self.striker,self.non_striker)
-            print(current_over)
+            current_over = Over(self.batting_team,self.bowling_team,self.striker,self.non_striker)
             self.over_rec.append(current_over)
-            self.striker,self.non_striker=self.non_striker,self.striker
+            self.striker = current_over.non_striker
+            self.non_striker = current_over.striker
+            if not self.striker or not self.non_striker:
+                self.score = self.team1.score
+                break
+        self.score = self.batting_team.score
+        self.batting_team.show_batting_team()
+
+
+
+            
 
     def assign_batsmen(self):
-        player = self.team1.send_player()
+        player = self.batting_team.send_player()
         if not player:
             print('No batsmen available.')
             return False
         return player
+
+class Toss:
+    def __init__(self,team1,team2):
+        self.team1 = team1
+        self.team2 = team2
+    
+    def chose(self):
+        inp = input('Team1 choose heads or tails(H/T)')
+        if inp not in ['H','T']:
+            print('invalid choice please try again')
+            return self.chose()
+        toss_val = self.toss()
+        print(toss_val)
+        if toss_val == inp:
+            return [self.team1,self.team2]
+        return [self.team2,self.team1]
+
+        
+    def toss(self):
+        return random.choice(['H', 'T'])
+    
         
 start_match = Match()        
         
