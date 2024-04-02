@@ -1,4 +1,5 @@
 import random
+from classes.toss import Toss
 from classes.players_list import Player, PlayersList
 
 from interfaces.player_interface import PlayerInterface
@@ -35,7 +36,6 @@ class Team:
         self.team_name = input('enter the name of the team')
         print('enter the team member details in order of the batting order.')
         for i in range(self.size):
-            self.player_list.view_players()
             while True:
                 inp = input(f'enter player id or enter new to add a new player')
                 if inp == 'new':
@@ -43,9 +43,16 @@ class Team:
                 else:
                     player = self.player_list.search_players(inp)
                 if player:
-                    break
+                    """check if player is booked"""
+                    if self.player_list.search_booked_players(inp):
+                        print('Player already booked')
+                    else:
+                        break
+                else:
+                    print('Player not found.')
             match_player = MatchPlayer(player.name,player)
             self.team.append(match_player)
+            self.player_list.book_player(player)
             print(f'{player.name} added successfully')
             
     def show_batting_team(self):
@@ -110,7 +117,7 @@ class Over:
         print('ASSIGNING BOWLER')
         self.bowling_team.show_team()
         while not self.bowler:
-            player = self.bowling_team.send_specified_player(int(input('enter the player id that you want bowl this over. ')))
+            player = self.bowling_team.send_specified_player(input('enter the player id that you want bowl this over. '))
             if not player:
                 print('invalid id, select again!')
             else:
@@ -119,11 +126,12 @@ class Over:
     def start(self):
         i = 0
         while i<6:
-            if self.score_to_meet<=0:
-                self.striker = None
-                self.non_striker = None
-                print(f'{self.batting_team.team_name} has won!!')
-                break
+            if self.score_to_meet or self.score_to_meet==0:
+                if self.score_to_meet<=0:
+                    self.striker = None
+                    self.non_striker = None
+                    print(f'{self.batting_team.team_name} has won!!')
+                    break
             print(f'STRIKER-{self.striker.name}\nNON-STRIKER-{self.non_striker.name}')
             inp = input('enter the ball reading')
             runs = ['0','1','2','3','4','5','6']
@@ -131,8 +139,9 @@ class Over:
                 score = int(inp)
                 self.balls.append(inp)
                 self.batting_team.add_score(score)
-                self.striker.update_batting_score(score)
+                self.striker.update_batting_scores(score)
                 self.bowler.add_runs_to_bowler(score)
+                self.meet_score(score)
                 if score%2!=0:
                     self.striker,self.non_striker=self.non_striker,self.striker
                 i+=1
@@ -140,6 +149,7 @@ class Over:
                 self.balls.append(inp)
                 self.bowler.add_runs_to_bowler(1)
                 self.batting_team.add_score(1)
+                self.meet_score(1)
             elif inp == 'w':
                 self.balls.append(inp)
                 self.striker = self.batting_team.send_player()
@@ -153,8 +163,10 @@ class Over:
         print(self.balls)
         print('------------------------------------------------------')
         print('SCORE-'+str(self.batting_team.score))
+
     def meet_score(self,inp):
-        self.score_to_meet-=inp
+        if self.score_to_meet:
+            self.score_to_meet-=inp
 
                 
     
@@ -166,7 +178,8 @@ class Match:
         self.over_rec = []
         self.striker = None
         self.non_striker = None
-        self.score = 0
+        self.inning1_score = 0
+        self.inning2_score = 0
         self.batting_team = None
         self.bowling_team = None
         self.players_list = players_list
@@ -180,7 +193,7 @@ class Match:
         self.team1 = Team(team_size,self.players_list)
         self.team1.show_team()
         self.team2 = Team(team_size,self.players_list)
-        self.team2.show_team(self.players_list)
+        self.team2.show_team()
         self.toss()
 
     def toss(self):
@@ -201,25 +214,40 @@ class Match:
             self.striker = current_over.non_striker
             self.non_striker = current_over.striker
             if not self.striker or not self.non_striker:
-                self.score = self.team1.score
+                self.inning1_score = self.batting_team.score
                 break
-        self.score = self.batting_team.score
-        self.batting_team.show_batting_team()
+            self.inning1_score = self.batting_team.score
+        # self.batting_team.show_batting_team()
         self.start_second_innings()
 
     def start_second_innings(self):
         print('STARTING SECOND INNINGS')
+        self.bowling_team,self.batting_team = self.batting_team,self.bowling_team
+        self.striker = self.assign_batsmen()
+        self.non_striker = self.assign_batsmen()
         for i in range(self.overs):
             print(f'STARTING OVER {i+1}')
-            current_over = Over(self.batting_team,self.bowling_team,self.striker,self.non_striker,self.score)
+            current_over = Over(self.batting_team,self.bowling_team,self.striker,self.non_striker,self.inning1_score-self.inning2_score)
             self.over_rec.append(current_over)
             self.striker = current_over.non_striker
             self.non_striker = current_over.striker
             if not self.striker or not self.non_striker:
-                self.score = self.team1.score
-                break
-        self.score = self.batting_team.score
+                if self.inning1_score > self.batting_team.score:
+                    print(f'{self.batting_team.team_name} lost the chase.')
+                    print(f'{self.bowling_team.team_name} Won the match.')
+                    break
+                else:
+                    print(f'{self.bowling_team.team_name} lost the chase.')
+                    print(f'{self.batting_team.team_name} Won the match.')
+                    break
+            self.inning2_score = self.batting_team.score
         self.batting_team.show_batting_team()
+
+    def release_players(self):
+        for i in self.batting_team:
+            self.players_list.release_player(i)
+        for i in self.bowling_team:
+            self.players_list.release_player(i)
           
     def assign_batsmen(self):
         player = self.batting_team.send_player()
@@ -228,53 +256,7 @@ class Match:
             return False
         return player
 
-class Toss:
-    def __init__(self,team1,team2):
-        self.team1 = team1
-        self.team2 = team2
-        self.calling_team = None
-        self.not_calling_team = None
 
-    
-    def chose(self):
-        choice = self.validate_choice([self.team1.team_name,self.team2.team_name])
-        if choice == self.team1.team_name:
-            self.calling_team = self.team1
-            self.not_calling_team = self.team2
-        else:
-            self.calling_team = self.team2
-            self.not_calling_team = self.team1
-            
-        print(f'{self.calling_team.team_name} you will be calling the toss')
-        heads_or_tails = self.validate_choice(['Heads','Tails'])
-        toss_val = self.toss()
-        print(toss_val)
-        if toss_val == heads_or_tails:
-            print(f'{self.calling_team.team_name} has won the toss')
-            choice = self.validate_choice(['Bat','Bowl'])
-            if choice == 'Bat':
-                return [self.calling_team,self.not_calling_team]
-            else:
-                return [self.not_calling_team,self.calling_team]
-        else:
-            print(f'{self.not_calling_team.team_name} has won the toss')
-            choice = self.validate_choice(['Bat','Bowl'])
-            if choice == 'Bat':
-                return [self.not_calling_team,self.calling_team]
-            else:
-                return [self.calling_team,self.not_calling_team]
-    
-    def validate_choice(self,choices):
-        while True:
-            choice = input(f'Do you want to {choices[0]} or {choices[1]} first?')
-            if choice not in choices:
-                print(f'Invalid choice, your choices are {choices[0]} and {choices[1]}')
-            else:
-                return choice
-
-        
-    def toss(self):
-        return random.choice(['Heads', 'Tails'])
     
         
 # start_match = Match()        

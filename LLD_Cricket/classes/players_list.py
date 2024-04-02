@@ -5,7 +5,7 @@ from interfaces.player_interface import PlayerInterface
 
 class Player(PlayerInterface):
     def __init__(self,name):
-        super().__init__(id,name)
+        super().__init__(name)
         self.name = name
 
 class PlayersList:
@@ -31,20 +31,27 @@ class PlayersList:
         print('Displaying bowling stats of all the available players')
         print(f'Id\tName\tOvers\tRuns\tWickets\tMaiden\tEconomy')
         for i in self.player_list:
-            if i not in self.booked_list:
-                i.display_bowling_stats()
+            # if i not in self.booked_list:
+            i.display_bowling_stats()
         print('Displaying the batting stats of all the players')
         print(f'Id\tName\tRuns\tBalls\tsixes\tfours\n')
         for i in self.player_list:
-            if i not in self.booked_list:
-                i.display_batting_player_score()
+            # if i not in self.booked_list:
+            i.display_batting_player_score()
 
     def search_players(self,id):
         for i in self.player_list:
             if i.id == id:
                 return i
         return False
-    
+    def search_booked_players(self,id):
+        for i in self.booked_list:
+            if i.id == id:
+                return i
+        return False
     def book_player(self,player):
         self.booked_list.append(player)
+
+    def release_player(self,player):
+        self.player_list.remove(player)
     
