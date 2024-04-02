@@ -23,21 +23,25 @@ class PlayerInterface(ABC):
             self.fours+=1
     
     def display_batting_player_score(self):
-        div = '-'*40
+        div = '-'*50
         print(f'{self.id}\t{self.name}\t{self.score}\t{self.balls_faced}\t{self.sixes}\t{self.fours}\n')
         print(div)
         
     def display_bowling_stats(self):
-        div = '-'*40
+        div = '-'*50
         print(f'{self.id}\t{self.name}\t{self.overs}\t{self.runs_given}\t{self.wickets}\t{self.maiden}\t{self.economy}\n')
         print(div)
 
 
     def add_runs_to_bowler(self,runs):
         self.runs_given+=runs
+        self.economy = self.runs_given/self.overs
 
     def add_wicket(self):
         self.wickets+=1
+    
+    def add_overs(self):
+        self.overs+=1
 
     def set_player_id(self,id):
         self.id = id

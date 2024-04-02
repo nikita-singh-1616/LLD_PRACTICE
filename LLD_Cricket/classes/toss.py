@@ -39,7 +39,7 @@ class Toss:
     
     def validate_choice(self,choices):
         while True:
-            choice = input(f'Do you want to {choices[0]} or {choices[1]} first?')
+            choice = input(f'Do you want to {choices[0]} or {choices[1]} first? ')
             if choice not in choices:
                 print(f'Invalid choice, your choices are {choices[0]} and {choices[1]}')
             else:

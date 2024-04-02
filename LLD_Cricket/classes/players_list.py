@@ -2,7 +2,28 @@
 
 from interfaces.player_interface import PlayerInterface
 
+class MatchPlayer(PlayerInterface):
+    def __init__(self, name,player) -> None:
+        super().__init__(name)
+        self.player = player
+        self.name = name
 
+    def update_batting_scores(self,runs):
+        team_player_update = super().update_batting_score(runs)
+        self.player.update_batting_score(runs)
+
+    def add_runs_to_bowler(self,runs):
+        add_runs_to_team_player = super().add_runs_to_bowler(runs)
+        self.player.add_runs_to_bowler(runs)
+
+    def add_wicket(self):
+        add_team_player_wicket = super().add_wicket()
+        self.player.add_wicket()
+
+    def add_overs(self):
+        add_team_player_over = super().add_overs()
+        self.player.add_overs()
+        
 class Player(PlayerInterface):
     def __init__(self,name):
         super().__init__(name)
@@ -31,12 +52,10 @@ class PlayersList:
         print('Displaying bowling stats of all the available players')
         print(f'Id\tName\tOvers\tRuns\tWickets\tMaiden\tEconomy')
         for i in self.player_list:
-            # if i not in self.booked_list:
             i.display_bowling_stats()
         print('Displaying the batting stats of all the players')
         print(f'Id\tName\tRuns\tBalls\tsixes\tfours\n')
         for i in self.player_list:
-            # if i not in self.booked_list:
             i.display_batting_player_score()
 
     def search_players(self,id):
