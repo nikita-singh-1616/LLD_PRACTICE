@@ -6,7 +6,6 @@ class Main:
         self.welcome()
 
     def welcome(self):
-        print('ok')
         while True:
             inp = int(input('Press 1 to check into bank\nPress 2 to use the atm\nPress 3 to exit main\n\n'))
             if inp == 1:

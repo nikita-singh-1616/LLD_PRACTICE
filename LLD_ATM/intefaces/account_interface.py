@@ -18,7 +18,7 @@ class AccountInterface(ABC):
         pass
 
     @abstractmethod
-    def display_amount(self):
+    def show_account_details(self):
         pass
 
     @abstractmethod

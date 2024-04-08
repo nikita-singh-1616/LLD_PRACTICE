@@ -21,11 +21,27 @@ class Bank1Account(AccountInterface):
         self.transaction_history[datetime.datetime.now()]=transaction
 
     def update_amount(self,amount):
+        if self.amount+amount<0:
+            raise ValueError('Invalid withdrawal amount')
+
         self.amount+=amount
         print('amount update to your account')
 
-    def display_amount(self):
-        pass
+    def show_account_details(self):
+        user_name = self.user.get_user_specific_details('name')
+        phone = self.user.get_user_specific_details('phone')
+        email = self.user.get_user_specific_details('email')
+        date_of_birth = self.user.get_user_specific_details('date_of_birth')
+        print(f'\n\tUSER DETAILS\nUsername: {user_name}\nPhone:{phone}\nWmail:{email}\nDOB:{date_of_birth}\n\tACCOUNT DETAILS\n'
+        f'Account Number:{self.account_number}\nAccount Balance:{self.amount}\nAccountType:{self.account_type}')
+        self.display_transactions()
 
     def display_transactions(self):
-        pass
+        if self.transaction_history.values():
+            print('\n\tTRANSACTION HISTORY\n')
+            print('Txn Type\tAmount\tTxn Date')
+            for i in self.transaction_history.values():
+                i.display_transaction()
+        else:
+            print('No Transactions To Display')
+
