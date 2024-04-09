@@ -45,3 +45,15 @@ class Bank1Account(AccountInterface):
         else:
             print('No Transactions To Display')
 
+    def send_specific_data(self,data):
+        data_dict = {
+            'account_no':self.account_number,
+            'user':self.user,
+            'amount':self.amount, 
+            'type':self.account_type,
+            'transacations':self.transaction_history
+        }
+        if data not in data_dict:
+            return False
+        return data_dict[data]
+

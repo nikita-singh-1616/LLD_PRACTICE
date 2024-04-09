@@ -107,3 +107,15 @@ class Bank1(BankInterface):
         except ValueError as e:
             print(str(e))
 
+    def transfer_money(self):
+        transfer_to = input("enter the reciever's account number: ")
+        amount = input("enter the amount to be transferred")
+        if transfer_to not in self.accounts:
+            print('invalid account number')
+        elif transfer_to == self.current_account.send_specific_data('account_no'):
+            print('cannot transfer to current account')
+        else:
+            self.current_account.update_amount(amount*(-1))
+            self.accounts[transfer_to].update_amount(amount)
+
+
