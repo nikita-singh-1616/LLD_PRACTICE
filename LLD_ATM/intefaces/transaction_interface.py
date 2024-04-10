@@ -6,6 +6,8 @@ class transactionInterface(ABC):
         self.type = None
         self.amount = None
         self.date = None
+        self.from_account = None
+        self.to_account = None
 
     @abstractmethod
     def create_transaction(self):

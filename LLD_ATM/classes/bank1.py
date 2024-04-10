@@ -13,27 +13,29 @@ class Bank1(BankInterface):
         self.current_account = None
         self.accounts = {} # {account_no:account}
         self.card_accounts = {}
-        self.login_user_menu()
+        # self.login_user_menu()
 
     def login_user_menu(self):
         while True:
             if self.current_user:
                 inp = int(input('Press1 to view your account details\nPress2 to withdraw amount\nPress 3 to deposit amount\n press 4 to transfer money to other account\n press 5 to request a debit card\npress6 to exit'))
                 if inp == 1:
-                    print('viewing account details')
+                    print(f'viewing account details')
                     self.view_account_details()
                 elif inp == 2:
-                    print('withdraw')
+                    print(f'withdraw')
                     self.withdraw_amount()
                 elif inp == 3:
-                    print('deposit')
+                    print(f'deposit')
                     self.deposit_amount()
                 elif inp == 4:
-                    print('transfer money')
+                    print(f'transfer money')
+                    self.transfer_money()
                 elif inp == 5:
-                    print('request a card')
+                    print(f'request a card')
                 elif inp == 6:
-                    return
+                    self.current_user = None
+                    self.current_account = None
             else:
                 inp = int(input('Press 1 to login\nPress 2 to use the create an account\nPress 3 to exit'))
                 if inp == 1:
@@ -50,14 +52,25 @@ class Bank1(BankInterface):
         pass
 
     def create_account(self):
-        print('creating an account')
+        print(f'creating an account')
         user = BankUser()
         user.create_user()
-        print('user registered')
+        user_aadhar = user.get_user_specific_details('aadhar')
+        user_email = user.get_user_specific_details('email')
+        for i in self.accounts.values():
+            if i.user.get_user_specific_details('aadhar') == user_aadhar:
+                print('user with this aadhar already exists')
+                return 
+        for i in self.accounts.values():
+            if i.user.get_user_specific_details('email') == user_email:
+                print('user with this email Id already exists')
+                return    
+
+        print(f'user registered')
         account = Bank1Account()
         account.create_account(user)
         self.accounts[account.account_number]=account
-        print('Account created successfully,please login again to continue or exit')
+        print(f'Account created successfully,please login again to continue or exit\n')
 
 
     def create_card(self):
@@ -73,16 +86,16 @@ class Bank1(BankInterface):
                 self.current_account = i
                 break
         if not user:
-            print('Invalid Email.')
+            print(f'Invalid Email.\n')
             return False
         while True:
             password = input('enter your password ')
             if user.validate_login(email,password):
                 self.current_user = user
-                print('Login successful.')
+                print(f'Login successful.\n')
                 break
             else:
-                print('Wrong Password ')
+                print(f'Wrong Password ')
 
     def view_account_details(self):
         self.current_account.show_account_details()
@@ -92,8 +105,9 @@ class Bank1(BankInterface):
         try:
             amount = int(input('enter the amount'))
             self.current_account.update_amount(amount*(-1))
-            transaction.create_transaction(Constants.transaction_types.get('withdraw'),amount*(-1))
+            transaction.create_transaction(Constants.transaction_types.get('withdraw'),amount*(-1),self.current_account.send_specific_data('account_no'),None)
             self.current_account.create_transaction(transaction)
+            print(f'money withdrawn successfully\n')
         except ValueError as e:
             print(str(e))
 
@@ -102,20 +116,30 @@ class Bank1(BankInterface):
         try:
             amount = int(input('enter the amount'))
             self.current_account.update_amount(amount)
-            transaction.create_transaction(Constants.transaction_types.get('deposit'),amount)
+            transaction.create_transaction(Constants.transaction_types.get('deposit'),amount,None,self.current_account.send_specific_data('account_no'))
             self.current_account.create_transaction(transaction)
+            print(f'money deposited successfully\n')
         except ValueError as e:
             print(str(e))
 
     def transfer_money(self):
         transfer_to = input("enter the reciever's account number: ")
-        amount = input("enter the amount to be transferred")
+        amount = int(input("enter the amount to be transferred"))
+        current_account_no = self.current_account.send_specific_data('account_no')
         if transfer_to not in self.accounts:
-            print('invalid account number')
-        elif transfer_to == self.current_account.send_specific_data('account_no'):
-            print('cannot transfer to current account')
+            print(f'invalid account number\n')
+        elif transfer_to == current_account_no:
+            print(f'cannot transfer to current account\n')
         else:
             self.current_account.update_amount(amount*(-1))
+            transaction = Transaction1()
+            transaction.create_transaction(Constants.transaction_types.get('transfer'),-amount,current_account_no,transfer_to)
+            self.current_account.create_transaction(transaction)
             self.accounts[transfer_to].update_amount(amount)
+            transaction2 = Transaction1()
+            transaction2.create_transaction(Constants.transaction_types.get('transfer'),amount,current_account_no,transfer_to)
+            self.accounts[transfer_to].create_transaction(transaction2)
+            print(f'Money transferred from {current_account_no} to {transfer_to}\n')
+
 
 

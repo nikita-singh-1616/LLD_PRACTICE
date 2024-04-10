@@ -39,7 +39,7 @@ class Bank1Account(AccountInterface):
     def display_transactions(self):
         if self.transaction_history.values():
             print('\n\tTRANSACTION HISTORY\n')
-            print('Txn Type\tAmount\tTxn Date')
+            print('Txn Type\tAmount\tTxn Date\t\tFrom\tTo')
             for i in self.transaction_history.values():
                 i.display_transaction()
         else:
