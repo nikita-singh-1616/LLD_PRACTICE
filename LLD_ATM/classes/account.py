@@ -1,4 +1,5 @@
 import datetime
+from classes.card import Card
 from intefaces.account_interface import AccountInterface
 
 
@@ -56,4 +57,9 @@ class Bank1Account(AccountInterface):
         if data not in data_dict:
             return False
         return data_dict[data]
+
+    def create_debit_card(self,bank):
+        card = Card()
+        card.create_card(bank)
+
 
