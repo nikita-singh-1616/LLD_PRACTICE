@@ -141,5 +141,8 @@ class Bank1(BankInterface):
             self.accounts[transfer_to].create_transaction(transaction2)
             print(f'Money transferred from {current_account_no} to {transfer_to}\n')
 
+    def card_creation(self):
+        self.current_account.create_debit_card(self)
+
 
 

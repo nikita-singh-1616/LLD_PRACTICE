@@ -27,7 +27,8 @@ class Card(CardInterface):
             print('INVALID PIN')
             return False
 
-    def set_pin(self,pin):
+    def set_pin(self):
+        pin = input('enter your pin number ')
         self.pin = pin
         print('Your debit card pin has been set.')
     

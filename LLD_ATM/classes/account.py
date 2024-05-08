@@ -61,5 +61,6 @@ class Bank1Account(AccountInterface):
     def create_debit_card(self,bank):
         card = Card()
         card.create_card(bank)
+        card.set_pin()
 
 
