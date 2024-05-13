@@ -1,9 +1,11 @@
+from classes.atm import ATM
 from classes.bank1 import Bank1
 
 
 class Main:
     def __init__(self) -> None:
         self.bank = Bank1()
+        self.atm = ATM(self.bank)
         self.welcome()
 
     def welcome(self):
@@ -12,7 +14,7 @@ class Main:
             if inp == 1:
                 self.bank.login_user_menu()
             elif inp == 2:
-                print('atm functionality')
+                self.atm.start()
             elif inp == 3:
                 print('thank you, visit again')
                 break

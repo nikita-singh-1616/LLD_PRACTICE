@@ -1,4 +1,5 @@
 import datetime
+import random
 from intefaces.card_interface import CardInterface
 
 
@@ -7,10 +8,16 @@ class Card(CardInterface):
         super().__init__()
 
     def create_card(self,bank):
-        self.card_no = None
+        print('card')
+        self.card_no = self.create_card_number()
         self.bank = bank
-        self.expiry_date = datetime.datetime.now+datetime.timedelta(5)
+        self.expiry_date = datetime.datetime.now()+datetime.timedelta(5)
         print('Your debit card is now created but inactive, it will be active after 2 mins.')
+        return self.card_no
+
+    def create_card_number(self):
+        print('rand')
+        return random.randint(1000000,9999999)
 
     def activate_card(self):
         self.status = True
@@ -31,5 +38,8 @@ class Card(CardInterface):
         pin = input('enter your pin number ')
         self.pin = pin
         print('Your debit card pin has been set.')
+
+    def validate_card(self):
+        pass
     
         

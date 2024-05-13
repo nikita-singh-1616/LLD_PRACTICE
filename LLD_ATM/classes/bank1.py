@@ -12,7 +12,7 @@ class Bank1(BankInterface):
         self.current_user = None
         self.current_account = None
         self.accounts = {} # {account_no:account}
-        self.card_accounts = {}
+        self.card_accounts = {} #{card_no:account}
         # self.login_user_menu()
 
     def login_user_menu(self):
@@ -33,6 +33,7 @@ class Bank1(BankInterface):
                     self.transfer_money()
                 elif inp == 5:
                     print(f'request a card')
+                    self.card_creation()
                 elif inp == 6:
                     self.current_user = None
                     self.current_account = None
@@ -142,7 +143,9 @@ class Bank1(BankInterface):
             print(f'Money transferred from {current_account_no} to {transfer_to}\n')
 
     def card_creation(self):
-        self.current_account.create_debit_card(self)
+        card = self.current_account.create_debit_card(self)
+        self.card_accounts[card] = self.current_account
+
 
 
 
