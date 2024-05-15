@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 
 class FloorInterface(ABC):
-    def __init__(self,floor_no,slot_types) -> None:
+    def __init__(self,floor_no,no_of_slots) -> None:
         super().__init__()
-        floor_no = floor_no
-        slot_types = slot_types
-        slots = {}
+        self.floor_no = floor_no
+        self.no_of_slots = no_of_slots
+        self.slots = []
         
     @abstractmethod
     def find_available_slot(self):
