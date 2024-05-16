@@ -10,7 +10,7 @@ class SlotInterface(ABC):
         self.in_time = None
 
     @abstractmethod
-    def park(self):
+    def park(self,vehicle_obj):
         pass
 
     @abstractmethod

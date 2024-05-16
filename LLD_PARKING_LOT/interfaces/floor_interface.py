@@ -8,7 +8,7 @@ class FloorInterface(ABC):
         self.slots = []
         
     @abstractmethod
-    def find_available_slot(self):
+    def find_available_slot(self,vehicle):
         pass
 
     @abstractmethod
@@ -16,5 +16,5 @@ class FloorInterface(ABC):
         pass
 
     @abstractmethod
-    def display(self):
+    def display(self,vehicle_type,display_type):
         pass

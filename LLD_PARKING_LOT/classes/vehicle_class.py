@@ -1,4 +1,4 @@
-from interfaces.vehicle_interface import VehicleInterface
+from LLD_PARKING_LOT.interfaces.vehicle_interface import VehicleInterface
 
 
 class Vehicle(VehicleInterface):
