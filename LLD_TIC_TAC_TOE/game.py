@@ -1,31 +1,37 @@
 from LLD_TIC_TAC_TOE.board import GameBoard
-from LLD_TIC_TAC_TOE.symbol import SymbolX, SymbolO
-from LLD_TIC_TAC_TOE.user import User1, User2
+from LLD_TIC_TAC_TOE.symbol import SymbolX, SymbolO, Symbol
+from LLD_TIC_TAC_TOE.user import User1, User2, User
 
 
 class Game:
     def __init__(self):
         self.board = None
-        self.player1 = None
-        self.player2 = None
+        self.no_of_players = 0
         self.queue = []
         self.board_size = None
-        self.initialize_players()
+        self.symbols = []
+        self.initialize_board()
 
     def initialize_players(self):
-        name1 = input('Enter player1 name: ')
-        name2 = input('Enter player2 name: ')
-        x = SymbolX()
-        o = SymbolO()
-        self.player1 = User1(name1, x)
-        self.player2 = User2(name2, o)
-        self.queue = [self.player1, self.player2]
-        self.initialize_board()
+        self.no_of_players = int(input(f'enter the number of players(max {self.board_size ** 2}): '))
+        while self.no_of_players > self.board_size ** 2:
+            self.no_of_players = int(input(f'enter the number of players({self.board_size ** 2}): '))
+        for i in range(self.no_of_players):
+            name1 = input(f'Enter player{i + 1} name: ')
+            symbol = input(f'enter their symbol: ')
+            while symbol in self.symbols:
+                symbol = input(f'enter their symbol: ')
+            self.symbols.append(symbol)
+            symbol = Symbol(symbol)
+            player = User(name1, symbol)
+            self.queue.append(player)
+        self.start()
 
     def initialize_board(self):
         self.board_size = int(input('Enter the size of the board'))
         self.board = GameBoard(self.board_size)
-        self.start()
+        self.initialize_players()
+
 
     def start(self):
         counter = 0
