@@ -40,10 +40,22 @@ class ProductManager:
 
     def validate_details(self, code, amount):
         shelf = self.product_shelf_manager.get_shelf(code)
-        if shelf.price == amount:
+        if not shelf:
+            print('Invalid Product code')
+            return False
+        return shelf.price <= amount and shelf.count > 0
+
+    def despence_products(self,code,amount):
+        shelf = self.product_shelf_manager.get_shelf(code)
+        if shelf.price <= amount and shelf.count > 0:
             product = shelf.purchase_product()
             if product:
-                return product
+                if shelf.price<amount:
+                    return product,amount-shelf.price
+                else:
+                    return product,0
             else:
                 print('Item is out of stock.Initiating refund')
-#                 initiate refund
+                return None,0
+        else:
+            return None,amount

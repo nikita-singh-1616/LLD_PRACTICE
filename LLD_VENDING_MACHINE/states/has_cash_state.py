@@ -18,7 +18,8 @@ class HasCoinState(State):
         return hash_[inp]()
 
     def insert_coin(self):
-        print('insert coin')
+        print('insert coins')
+        self.vending_machine.cash_manager.add_coin()
 
     def select_product(self):
         print('select product ')
@@ -26,6 +27,8 @@ class HasCoinState(State):
 
     def cancel(self):
         print('cancel')
+        money_to_return = self.vending_machine.cash_manager.input_cash
+        self.vending_machine.cash_manager.return_money(money_to_return)
 
     def press_insert_coin(self):
         print(self.default_msg)

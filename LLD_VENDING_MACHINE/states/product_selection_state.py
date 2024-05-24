@@ -1,3 +1,4 @@
+from LLD_VENDING_MACHINE.states.checkout_state import Checkout
 from LLD_VENDING_MACHINE.states.state_manager import State
 
 
@@ -18,12 +19,21 @@ class ProductSelectionState(State):
 
     def use_keypad(self):
         print('keypad active')
-
-    def checkout(self):
-        print('checkout ')
+        product_code = input('enter the product code: ')
+        input_cash = self.vending_machine.cash_manager.input_cash
+        if self.vending_machine.product_manager.validate_details(product_code,input_cash):
+            inp = int(input('You have inserted sufficient amount. \nPress 1 to checkout\nPress 2 to go back'))
+            if inp == 1:
+                self.checkout(product_code)
+            elif inp == 2:
+                self.use_keypad()
+    def checkout(self,product_code):
+        self.vending_machine.state = Checkout(self.vending_machine,product_code)
 
     def cancel(self):
-        print('cancel')
+        money_to_return = self.vending_machine.cash_manager.input_cash
+        self.vending_machine.cash_manager.return_money(money_to_return)
+        self.vending_machine.state = None
 
     def insert_coin(self):
         print(self.default_msg)
