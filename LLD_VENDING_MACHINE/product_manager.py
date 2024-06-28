@@ -16,7 +16,7 @@ class ProductManager:
             'code': '3orange',
             'price': 30
         }]
-        self.product_count = 20
+        self.product_count = 1
         self.create_shelves()
 
     def create_shelves(self):
@@ -32,7 +32,7 @@ class ProductManager:
 
     def display_products(self):
         print('Vending Machine')
-        print('Product Code\tPrice\tQty.')
+        print('ProductId\tPrice\tQty.')
         for i in self.product_codes:
             shelf = self.product_shelf_manager.get_shelf(i['code'])
             shelf.display_shelf()

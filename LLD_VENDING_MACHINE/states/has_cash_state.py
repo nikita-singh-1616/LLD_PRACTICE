@@ -3,17 +3,18 @@ from LLD_VENDING_MACHINE.states.state_manager import State
 
 
 class HasCoinState(State):
-    def __init__(self,machine):
+    def __init__(self, machine):
         super().__init__()
         self.vending_machine = machine
 
     def display(self):
-        inp = int(input(f'Press 1 to insert coin\nPress 2 to start product selection \nPress 3 to cancel\nPress 4 to view the vending machine\n'))
+        inp = int(input(
+            f'Press 1 to insert coin\nPress 2 to start product selection \nPress 3 to cancel\nPress 4 to view the vending machine\n'))
         hash_ = {
-            1:self.insert_coin,
-            2:self.select_product,
-            3:self.cancel,
-            4:self.display_vending_machine
+            1: self.insert_coin,
+            2: self.select_product,
+            3: self.cancel,
+            4: self.display_vending_machine
         }
         return hash_[inp]()
 
@@ -22,8 +23,11 @@ class HasCoinState(State):
         self.vending_machine.cash_manager.add_coin()
 
     def select_product(self):
-        print('select product ')
-        self.vending_machine.state = ProductSelectionState(self.vending_machine)
+        if self.vending_machine.cash_manager.input_cash > 0:
+            print('select product ')
+            self.vending_machine.state = ProductSelectionState(self.vending_machine)
+        else:
+            print('Enter cash to select product.')
 
     def cancel(self):
         print('cancel')

@@ -27,6 +27,10 @@ class ProductSelectionState(State):
                 self.checkout(product_code)
             elif inp == 2:
                 self.use_keypad()
+        else:
+            print('Product cannot be dispensed due to insufficient balance or the product is unavailable.')
+            self.cancel()
+
     def checkout(self,product_code):
         self.vending_machine.state = Checkout(self.vending_machine,product_code)
 
