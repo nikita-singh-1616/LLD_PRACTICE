@@ -81,8 +81,50 @@ class Bishop(Piece):
         super().__init__(f'{color}B')
         self.color = color
 
-    def move(self):
-        pass
+    def move(self,board):
+        n = len(board)
+        possible_moves = []
+        # left top diagonal
+        i = self.position[0]-1
+        j = self.position[1]-1
+        while i >= 0 and j>=0 and i<n and j<n and (board[i][j]=='_' or board[i][j].color!=self.color):
+            possible_moves.append([i, j])
+            if board[i][j]!='_':
+                break
+            j-=1
+            i-=1
+        # right top diagonal
+        i = self.position[0]-1
+        j = self.position[1]+1
+        while i >= 0 and j >= 0 and i < n and j < n  and (board[i][j]=='_' or board[i][j].color!=self.color):
+            possible_moves.append([i, j])
+            if board[i][j]!='_':
+                break
+            j += 1
+            i -= 1
+        # left top diagonal
+        i = self.position[0]+1
+        j = self.position[1]-1
+        while i >= 0 and j >= 0 and i < n and j < n and (board[i][j]=='_' or board[i][j].color!=self.color):
+            possible_moves.append([i, j])
+            if board[i][j]!='_':
+                break
+            j -= 1
+            i += 1
+        # left top diagonal
+        i = self.position[0]+1
+        j = self.position[1]+1
+        while i >= 0 and j >= 0 and i < n and j < n and (board[i][j]=='_' or board[i][j].color!=self.color):
+            possible_moves.append([i, j])
+            if board[i][j]!='_':
+                break
+            j += 1
+            i += 1
+        return possible_moves
+
+
+
+
 
 
 class Knight(Piece):
