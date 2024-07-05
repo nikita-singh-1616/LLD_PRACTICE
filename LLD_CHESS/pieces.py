@@ -61,24 +61,28 @@ class King(Piece):
                 board[x + 1][y] == '_' or board[x + 1][y].color != self.color) else []
         bottom = [x - 1, y] if x - 1 >= 0 and (board[x - 1][y] == '_' or board[x - 1][y].color != self.color) else []
         right = [x, y + 1] if y + 1 < len(board[0]) and (
-                    board[x][y + 1] == '_' or board[x][y + 1].color != self.color) else []
+                board[x][y + 1] == '_' or board[x][y + 1].color != self.color) else []
         left = [x, y - 1] if y - 1 >= 0 and (board[x][y - 1] == '_' or board[x][y - 1].color != self.color) else []
         possible_moves = top + left + right + bottom
         return possible_moves
 
-    def check_for_check(self,board):
+    def check_for_check(self, board):
         x = self.position[0]
         y = self.position[1]
         """check for pawns"""
         if self.color == 'W':
-            if ((board[x-1][y+1] != '_' and board[x-1][y+1].color!=self.color and board[x-1][y+1].name[-1] == 'P') or
-                    (board[x-1][y-1] != '_' and board[x-1][y-1].color!=self.color and board[x-1][y-1].name[-1] == 'P')):
+            if ((board[x - 1][y + 1] != '_' and board[x - 1][y + 1].color != self.color and board[x - 1][y + 1].name[
+                -1] == 'P') or
+                    (board[x - 1][y - 1] != '_' and board[x - 1][y - 1].color != self.color and
+                     board[x - 1][y - 1].name[-1] == 'P')):
                 return True
         if self.color == 'B':
-            if ((board[x+1][y+1] != '_' and board[x+1][y+1].color!=self.color and board[x + 1][y + 1].name[-1] == 'P')
-                    or (board[x+1][y-1] != '_' and board[x+1][y-1].color!=self.color) and board[x+1][y-1].name[-1]=='P'):
+            if ((board[x + 1][y + 1] != '_' and board[x + 1][y + 1].color != self.color and board[x + 1][y + 1].name[
+                -1] == 'P')
+                    or (board[x + 1][y - 1] != '_' and board[x + 1][y - 1].color != self.color) and
+                    board[x + 1][y - 1].name[-1] == 'P'):
                 return True
-        """check for rook"""
+        """check for vertical check"""
         top_x = x - 1
         bot_x = x + 1
         while top_x >= 0:
@@ -95,11 +99,10 @@ class King(Piece):
                 bot_x += 1
             else:
                 if board[bot_x][y].color != self.color:
-                    if  board[bot_x][y].name[-1] == 'R' or board[bot_x][y].name[-1] == 'Q':
-
+                    if board[bot_x][y].name[-1] == 'R' or board[bot_x][y].name[-1] == 'Q':
                         return True
                 break
-        #             horizontal movement
+        """horizontal movement"""
         right_y = y + 1
         left_y = y - 1
         while right_y < len(board[0]):
@@ -119,6 +122,7 @@ class King(Piece):
                     if board[x][left_y].name[-1] == 'R' or board[x][left_y].name[-1] == 'Q':
                         return True
                 break
+        """horse checks"""
         moves = [(-1, -2), (-2, -1), (-2, 1), (-1, 2), (1, 2), (2, 1), (2, -1), (1, -2)]
         for move in moves:
             x = self.position[0]
@@ -129,7 +133,53 @@ class King(Piece):
                 if board[new_x][new_y] != '_' and board[new_x][new_y].color != self.color:
                     if board[new_x][new_y].name[-1] == 'N':
                         return True
+        """diagonal checks"""
+        i = self.position[0] - 1
+        j = self.position[1] - 1
+        n = len(board)
+        while 0 <= i < n and 0 <= j < n and (board[i][j] == '_' or board[i][j].color != self.color):
+            if board[i][j] != '_':
+                if board[i][j].name[-1] == 'Q' or board[i][j].name[-1] == 'B':
+                    return True
+                else:
+                    break
+            j -= 1
+            i -= 1
+        # right top diagonal
+        i = self.position[0] - 1
+        j = self.position[1] + 1
+        while 0 <= i < n and 0 <= j < n and (board[i][j] == '_' or board[i][j].color != self.color):
+            if board[i][j] != '_':
+                if board[i][j].name[-1] == 'Q' or board[i][j].name[-1] == 'B':
+                    return True
+                else:
+                    break
+            j += 1
+            i -= 1
+        # left top diagonal
+        i = self.position[0] + 1
+        j = self.position[1] - 1
+        while 0 <= i < n and 0 <= j < n and (board[i][j] == '_' or board[i][j].color != self.color):
+            if board[i][j] != '_':
+                if board[i][j].name[-1] == 'Q' or board[i][j].name[-1] == 'B':
+                    return True
+                else:
+                    break
+            j -= 1
+            i += 1
+        # left top diagonal
+        i = self.position[0] + 1
+        j = self.position[1] + 1
+        while 0 <= i < n and 0 <= j < n and (board[i][j] == '_' or board[i][j].color != self.color):
+            if board[i][j] != '_':
+                if board[i][j].name[-1] == 'Q' or board[i][j].name[-1] == 'B':
+                    return True
+                else:
+                    break
+            j += 1
+            i += 1
         return False
+
 
 class Queen(Piece):
     def __init__(self, color):

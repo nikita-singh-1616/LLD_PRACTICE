@@ -139,12 +139,15 @@ class ChessBoard(BoardInterface):
                             self.board[x][y] = prev_state_1
                             self.board[new_x][new_y] = prev_state_2
                             print('check alert')
-                            continue
+                            self.display()
+                            break
                         toggle = not toggle
                         break
 
     def move(self, cur_pos,next_pos):
         self.board[cur_pos[0]][cur_pos[1]],self.board[next_pos[0]][next_pos[1]] = '_',self.board[cur_pos[0]][cur_pos[1]]
+        if self.board[next_pos[0]][next_pos[1]] != '_':
+            self.board[next_pos[0]][next_pos[1]].status = False
         self.board[next_pos[0]][next_pos[1]].position = [next_pos[0],next_pos[1]]
         self.display()
 
