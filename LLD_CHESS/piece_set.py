@@ -5,8 +5,8 @@ class BlackPlayer:
     def __init__(self):
         self.piece_set = {
             'pawns': [],
-            'king': King('B'),
-            'queen': Queen('B'),
+            'king': [King('B')],
+            'queen': [Queen('B')],
             'rooks': [],
             'knights': [],
             'bishops': []
@@ -27,8 +27,8 @@ class WhitePlayer:
     def __init__(self):
         self.piece_set = {
             'pawns': [],
-            'king': King('W'),
-            'queen': Queen('W'),
+            'king': [King('W')],
+            'queen': [Queen('W')],
             'rooks': [],
             'knights': [],
             'bishops': []

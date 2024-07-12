@@ -1,5 +1,5 @@
 from LLD_TIC_TAC_TOE.board import GameBoard
-from LLD_TIC_TAC_TOE.symbol import SymbolX, SymbolO, Symbol
+from LLD_TIC_TAC_TOE.symbol import Symbol
 from LLD_TIC_TAC_TOE.user import User1, User2, User
 
 

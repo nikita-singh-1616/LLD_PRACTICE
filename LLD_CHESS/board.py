@@ -13,7 +13,7 @@ class BoardInterface(ABC):
         pass
 
     @abstractmethod
-    def move(self, position,next_position):
+    def move(self, position, next_position, board):
         pass
 
 
@@ -21,6 +21,7 @@ class ChessBoard(BoardInterface):
     def __init__(self):
         super().__init__(8)
         self.board = [['_' for _ in range(self.size)] for _ in range(self.size)]
+        self.end = False
         self.black = BlackPlayer()
         self.white = WhitePlayer()
         self.initialize()
@@ -31,62 +32,62 @@ class ChessBoard(BoardInterface):
         """pawn initialization"""
         for i in range(8):
             self.board[1][i] = self.black.piece_set['pawns'][i]
-            self.black.piece_set['pawns'][i].position = [1,i]
+            self.black.piece_set['pawns'][i].position = [1, i]
 
         for i in range(8):
             self.board[6][i] = self.white.piece_set['pawns'][i]
-            self.white.piece_set['pawns'][i].position = [6,i]
+            self.white.piece_set['pawns'][i].position = [6, i]
 
         """rook initialization"""
         self.board[0][0] = self.black.piece_set['rooks'][0]
-        self.black.piece_set['rooks'][0].position = [0,0]
+        self.black.piece_set['rooks'][0].position = [0, 0]
         self.board[0][self.size - 1] = self.black.piece_set['rooks'][1]
-        self.black.piece_set['rooks'][1].position = [0,self.size - 1]
+        self.black.piece_set['rooks'][1].position = [0, self.size - 1]
         self.board[self.size - 1][0] = self.white.piece_set['rooks'][0]
-        self.white.piece_set['rooks'][0].position = [self.size - 1,0]
+        self.white.piece_set['rooks'][0].position = [self.size - 1, 0]
         self.board[self.size - 1][self.size - 1] = self.white.piece_set['rooks'][1]
-        self.white.piece_set['rooks'][1].position = [self.size - 1,self.size - 1]
+        self.white.piece_set['rooks'][1].position = [self.size - 1, self.size - 1]
 
         """knight initialization"""
         self.board[0][1] = self.black.piece_set['knights'][0]
-        self.black.piece_set['knights'][0].position = [0,1]
+        self.black.piece_set['knights'][0].position = [0, 1]
         self.board[0][self.size - 2] = self.black.piece_set['knights'][1]
-        self.black.piece_set['knights'][1].position = [0,self.size - 2]
+        self.black.piece_set['knights'][1].position = [0, self.size - 2]
         self.board[self.size - 1][1] = self.white.piece_set['knights'][0]
-        self.white.piece_set['knights'][0].position = [self.size - 1,1]
+        self.white.piece_set['knights'][0].position = [self.size - 1, 1]
         self.board[self.size - 1][self.size - 2] = self.white.piece_set['knights'][1]
-        self.white.piece_set['knights'][1].position = [self.size - 1,self.size - 2]
+        self.white.piece_set['knights'][1].position = [self.size - 1, self.size - 2]
 
         """bishop initialization"""
         self.board[0][2] = self.black.piece_set['bishops'][0]
-        self.black.piece_set['bishops'][0].position = [0,2]
+        self.black.piece_set['bishops'][0].position = [0, 2]
         self.board[0][self.size - 3] = self.black.piece_set['bishops'][1]
-        self.black.piece_set['bishops'][1].position = [0,self.size - 3]
+        self.black.piece_set['bishops'][1].position = [0, self.size - 3]
         self.board[self.size - 1][2] = self.white.piece_set['bishops'][0]
-        self.white.piece_set['bishops'][0].position = [self.size - 1,2]
+        self.white.piece_set['bishops'][0].position = [self.size - 1, 2]
         self.board[self.size - 1][self.size - 3] = self.white.piece_set['bishops'][1]
-        self.white.piece_set['bishops'][1].position = [self.size - 1,self.size - 3]
+        self.white.piece_set['bishops'][1].position = [self.size - 1, self.size - 3]
 
         """king initialization"""
-        self.board[0][3] = self.black.piece_set['king']
-        self.black.piece_set['king'].position = [0,3]
-        self.board[self.size - 1][3] = self.white.piece_set['king']
-        self.white.piece_set['king'].position = [self.size - 1,3]
+        self.board[0][3] = self.black.piece_set['king'][0]
+        self.black.piece_set['king'][0].position = [0, 3]
+        self.board[self.size - 1][3] = self.white.piece_set['king'][0]
+        self.white.piece_set['king'][0].position = [self.size - 1, 3]
 
         """queen initialization"""
-        self.board[0][4] = self.black.piece_set['queen']
-        self.black.piece_set['queen'] = [0,4]
-        self.board[self.size - 1][4] = self.white.piece_set['queen']
-        self.white.piece_set['queen'] = [self.size - 1,4]
+        self.board[0][4] = self.black.piece_set['queen'][0]
+        self.black.piece_set['queen'][0].position = [0, 4]
+        self.board[self.size - 1][4] = self.white.piece_set['queen'][0]
+        self.white.piece_set['queen'][0].position = [self.size - 1, 4]
 
     def display(self):
-        print(" ",end=" ")
+        print(" ", end=" ")
         for i in range(self.size):
-            print(i,end='  ')
+            print(i, end='  ')
         print()
 
         for i in range(self.size):
-            print(i,end=" ")
+            print(i, end=" ")
             for j in range(self.size):
                 if self.board[i][j] != '_':
                     print(self.board[i][j].name, end=" ")
@@ -96,7 +97,7 @@ class ChessBoard(BoardInterface):
 
     def game(self):
         toggle = True
-        while True:
+        while not self.end:
             if toggle:
                 current_player = self.white
                 print('Current Player is White')
@@ -116,7 +117,7 @@ class ChessBoard(BoardInterface):
                 print('Invalid Position')
                 continue
             else:
-                self.board[x][y].position = [x,y]
+                self.board[x][y].position = [x, y]
                 possible_moves = self.board[x][y].move(self.board)
                 print(f'your possible moves are {possible_moves}')
                 while True:
@@ -128,37 +129,72 @@ class ChessBoard(BoardInterface):
                     if new_y > self.size:
                         print('Invalid Y coordinate')
                         continue
-                    if [new_x,new_y] not in possible_moves:
+                    if [new_x, new_y] not in possible_moves:
                         print('Invalid move')
                         continue
                     else:
                         prev_state_1 = self.board[x][y]
                         prev_state_2 = self.board[new_x][new_y]
-                        self.move([x,y],[new_x,new_y])
+                        self.move([x, y], [new_x, new_y], self.board)
                         if self.check_for_check(current_player.color):
                             self.board[x][y] = prev_state_1
                             self.board[new_x][new_y] = prev_state_2
                             print('check alert')
-                            self.display()
                             break
+                        self.display()
+
                         toggle = not toggle
                         break
 
-    def move(self, cur_pos,next_pos):
-        self.board[cur_pos[0]][cur_pos[1]],self.board[next_pos[0]][next_pos[1]] = '_',self.board[cur_pos[0]][cur_pos[1]]
-        if self.board[next_pos[0]][next_pos[1]] != '_':
-            self.board[next_pos[0]][next_pos[1]].status = False
-        self.board[next_pos[0]][next_pos[1]].position = [next_pos[0],next_pos[1]]
-        self.display()
+    def move(self, cur_pos, next_pos, board):
+        board[cur_pos[0]][cur_pos[1]], board[next_pos[0]][next_pos[1]] = '_', board[cur_pos[0]][cur_pos[1]]
+        if board[next_pos[0]][next_pos[1]] != '_':
+            board[next_pos[0]][next_pos[1]].status = False
+        board[next_pos[0]][next_pos[1]].position = [next_pos[0], next_pos[1]]
+        # self.display()
 
-    def check_for_check(self,cur_color):
-        if self.black.piece_set['king'].check_for_check(self.board):
+    def check_for_check(self, cur_color):
+        if self.black.piece_set['king'][0].check_for_check(self.board):
             print('CHECK FOR BLACK')
+            if cur_color != self.black.color:
+                if self.check_mate(self.black.color):
+                    print('CHECK MATE BY BLACK')
+                    self.end = True
+
             return cur_color == self.black.color
-        if self.white.piece_set['king'].check_for_check(self.board):
+        if self.white.piece_set['king'][0].check_for_check(self.board):
             print('CHECK FOR WHITE')
+            if cur_color != self.white.color:
+                if self.check_mate(self.white.color):
+                    print('CHECK MATE BY BLACK')
+                    self.end = True
             return cur_color == self.white.color
 
+    def check_mate(self, cur_color):
+        dummy_board = self.board
+        if self.black.color == cur_color:
+            cur_set = self.black
+        else:
+            cur_set = self.white
+        """cover the check"""
+        for i in cur_set.piece_set.values():
+            for key in i:
+                if key.status:
+                    possible_moves = key.move(self.board)
+                    original_x = key.position[0]
+                    original_y = key.position[1]
+                    main_m = (original_x, original_y)
+                    for m in possible_moves:
+                        next_ = dummy_board[m[0]][m[1]]
+                        main_m = m
+                        self.move((original_x, original_y), m, dummy_board)
+                        if not self.check_for_check(cur_color):
+                            self.move(main_m, (original_x, original_y), dummy_board)
+                            dummy_board[main_m[0]][main_m[1]] = next_
+                            return False
+                        self.move(main_m, (original_x, original_y), dummy_board)
+                        dummy_board[main_m[0]][main_m[1]] = next_
+        return True
 
 
 obj = ChessBoard()
